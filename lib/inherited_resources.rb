@@ -42,3 +42,18 @@ class ActionController::Base
     create_resources_url_helpers!
   end
 end
+
+#
+# Add support for new rail5 api_only applcations
+# if you inherit from ActionController::API you still need inherit_resources method
+#
+class ActionController::API
+  # If you cannot inherit from InheritedResources::Base you can call
+  # inherit_resources in your controller to have all the required modules and
+  # funcionality included.
+  def self.inherit_resources
+    InheritedResources::Base.inherit_resources(self)
+    initialize_resources_class_accessors!
+    create_resources_url_helpers!
+  end
+end
