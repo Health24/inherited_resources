@@ -25,9 +25,9 @@ module InheritedResources
           respond_to :html
         end
 
-        self.responder = InheritedResources::Responder
-
         unless is_api_only
+          self.responder = InheritedResources::Responder
+
           helper_method :resource, :collection, :resource_class, :association_chain,
                         :resource_instance_name, :resource_collection_name,
                         :resource_url, :resource_path,
