@@ -21,7 +21,7 @@ module InheritedResources
         extend  InheritedResources::UrlHelpers
 
         # Add at least :html mime type
-        if is_api_only && mimes_for_respond_to.empty?
+        if !is_api_only && mimes_for_respond_to.empty?
           respond_to :html
         end
 
