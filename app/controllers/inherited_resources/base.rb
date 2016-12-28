@@ -9,6 +9,11 @@ module InheritedResources
   # or overwrite some helpers in the base_helpers.rb file.
   #
   class Base < ::ApplicationController
+
+    def self.api_only?
+      Rails.application.config.try(:api_only)
+    end
+
     # Overwrite inherit_resources to add specific InheritedResources behavior.
     def self.inherit_resources(base)
       base.class_eval do
@@ -18,10 +23,13 @@ module InheritedResources
         extend  InheritedResources::UrlHelpers
 
         # Add at least :html mime type
-        respond_to :html if self.mimes_for_respond_to.empty?
+        if !api_only? && mimes_for_respond_to.empty?
+          respond_to :html
+        end
+
         self.responder = InheritedResources::Responder
 
-        unless Rails.application.config.try(:api_only)
+        unless api_only?
           helper_method :resource, :collection, :resource_class, :association_chain,
                         :resource_instance_name, :resource_collection_name,
                         :resource_url, :resource_path,
