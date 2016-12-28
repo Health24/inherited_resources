@@ -10,26 +10,24 @@ module InheritedResources
   #
   class Base < ::ApplicationController
 
-    def self.api_only?
-      Rails.application.config.try(:api_only)
-    end
-
     # Overwrite inherit_resources to add specific InheritedResources behavior.
     def self.inherit_resources(base)
       base.class_eval do
+        is_api_only = Rails.application.config.try(:api_only)
+
         include InheritedResources::Actions
         include InheritedResources::BaseHelpers
         extend  InheritedResources::ClassMethods
         extend  InheritedResources::UrlHelpers
 
         # Add at least :html mime type
-        if !api_only? && mimes_for_respond_to.empty?
+        if is_api_only && mimes_for_respond_to.empty?
           respond_to :html
         end
 
         self.responder = InheritedResources::Responder
 
-        unless api_only?
+        unless is_api_only
           helper_method :resource, :collection, :resource_class, :association_chain,
                         :resource_instance_name, :resource_collection_name,
                         :resource_url, :resource_path,
